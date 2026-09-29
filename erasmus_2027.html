@@ -307,6 +307,11 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
 .checks .grp{grid-column:1/-1;font-size:.78rem;font-weight:700;color:var(--teal);margin-top:.35rem;text-transform:uppercase;letter-spacing:.04em}
 .toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:.6rem 1rem;border-radius:8px;font-size:.95rem;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
+.toast{width:max-content;max-width:calc(100% - 2rem);text-align:center}
+.toast.ok{background:var(--ok);color:#fff;font-size:1.1rem;font-weight:700;padding:.9rem 1.4rem;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+@keyframes flash{0%,60%{background:#FFF3B0;box-shadow:inset 4px 0 0 var(--amber)}100%{background:transparent;box-shadow:none}}
+.just-saved{animation:flash 4s ease-out}
+.acard.just-saved{animation:flash 4s ease-out}
 
 @media (max-width:1000px){
   .layout{grid-template-columns:1fr}
@@ -890,7 +895,7 @@ const TIPOS=["Piso o habitación","Residencia","Agencia inmobiliaria","Familia d
 const afp=$("#aForm").elements.pais; opt(afp,"","Elige un país"); PAISES.forEach(p=>opt(afp,p,p));
 TIPOS.forEach(t=>opt($("#aForm").elements.tipo,t,t));
 
-function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),2600)}
+function toast(msg,tipo){const t=$("#toast");t.textContent=(tipo==="ok"?"✓ ":"")+msg;t.classList.toggle("ok",tipo==="ok");t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),tipo==="ok"?4500:2600)}
 function norm(s){return (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}
 
 /* ---------- Conexión con la hoja de Google ---------- */
@@ -922,9 +927,12 @@ async function cargarTodo(){
 // Solo empresas y alojamientos: el alumnado nunca se guarda en el navegador
 function guardarCache(){ try{ localStorage.setItem(CACHE,JSON.stringify({t:Date.now(),empresas,alojs})) }catch(e){} }
 function leerCache(){ try{ const c=JSON.parse(localStorage.getItem(CACHE)||"null"); if(c&&Array.isArray(c.empresas)){ empresas=c.empresas; alojs=c.alojs||[]; return true } }catch(e){} return false }
+let flashId=null;
+function destacar(sel){ setTimeout(()=>{ const el=document.querySelector(sel); if(el){ el.scrollIntoView({behavior:"smooth",block:"center"}) } flashId=null },80) }
 async function saveEmpresa(data,id){
   const j=await api("guardar",{tabla:"empresas",id:id||"",registro:data});
-  upsert(empresas,j.registro); guardarCache(); render(); stamp();
+  upsert(empresas,j.registro); guardarCache(); flashId=j.registro.id; render(); stamp();
+  const visible=filtered().some(e=>e.id===j.registro.id); destacar('[data-id="'+j.registro.id+'"]'); return visible;
 }
 async function deleteEmpresa(id){
   await api("borrar",{tabla:"empresas",id});
@@ -949,7 +957,12 @@ $("#loginForm").addEventListener("submit",async ev=>{
 });
 $("#btnLogout").addEventListener("click",logout);
 $("#btnLinks").addEventListener("click",()=>$("#dlgLinks").showModal());
-document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>b.closest("dialog").close()));
+function snap(f){ return JSON.stringify([...f.querySelectorAll("input,select,textarea")].map(x=>x.type==="checkbox"?x.checked:x.value)) }
+function marcar(f){ f.dataset.snap=snap(f) }
+function sucio(dlg){ const f=dlg.querySelector("form"); return !!(f&&f.dataset.snap&&snap(f)!==f.dataset.snap) }
+function tryClose(dlg){ if(sucio(dlg)&&!confirm("Has escrito datos que no se han guardado.\n\n¿Salir sin guardar los cambios?")) return; dlg.close() }
+document.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",()=>tryClose(b.closest("dialog"))));
+document.querySelectorAll("dialog").forEach(d=>d.addEventListener("cancel",ev=>{ if(sucio(d)&&!confirm("Has escrito datos que no se han guardado.\n\n¿Salir sin guardar los cambios?")) ev.preventDefault() }));
 $("#pwToggle").addEventListener("click",()=>{
   const i=$("#loginPw"), show=i.type==="password";
   i.type=show?"text":"password";
@@ -1035,7 +1048,7 @@ function render(){
   }
   items.forEach(e=>{
     const li=document.createElement("li");
-    const b=document.createElement("button"); b.type="button"; b.className="row";
+    const b=document.createElement("button"); b.type="button"; b.className="row"+(e.id===flashId?" just-saved":""); b.dataset.id=e.id;
     const left=document.createElement("div");
     const nm=document.createElement("div"); nm.className="name"; nm.textContent=e.nombre;
     const pl=document.createElement("div"); pl.className="place"; pl.textContent=[e.ciudad,e.pais].filter(Boolean).join(", ")+(e.sector?" — "+e.sector:"");
@@ -1152,7 +1165,7 @@ function openForm(e){
   else { f.elements.estado.value="pendiente"; if($("#fPais").value) f.elements.pais.value=$("#fPais").value;
     if($("#fCiclo").value) f.querySelectorAll('input[name="ciclo"]').forEach(c=>c.checked=c.value===$("#fCiclo").value) }
   $("#dupHint").hidden=true;
-  $("#dlgForm").showModal();
+  marcar($("#form")); $("#dlgForm").showModal();
 }
 $("#btnAdd").addEventListener("click",()=>openForm(null));
 $("#form").elements.nombre.addEventListener("input",ev=>{
@@ -1160,7 +1173,7 @@ $("#form").elements.nombre.addEventListener("input",ev=>{
   if(!d.length){ h.hidden=true; return }
   h.hidden=false; h.textContent="⚠ Ya existe: "+d.map(x=>x.nombre+(x.pais?" ("+x.pais+")":"")).join(", ");
 });
-$("#fCancel").addEventListener("click",()=>$("#dlgForm").close());
+$("#fCancel").addEventListener("click",()=>tryClose($("#dlgForm")));
 $("#form").addEventListener("submit",async ev=>{
   ev.preventDefault(); const f=ev.target;
   const g=k=>(f.elements[k].value||"").trim();
@@ -1173,7 +1186,7 @@ $("#form").addEventListener("submit",async ev=>{
   const dups=parecidas(data.nombre, editing&&editing.id);
   if(dups.length && !confirm("Ya hay "+(dups.length===1?"una empresa parecida":"empresas parecidas")+" en la lista:\n\n"+dups.map(d=>"• "+d.nombre+" ("+[d.ciudad,d.pais].filter(Boolean).join(", ")+")").join("\n")+"\n\n¿Quieres guardarla de todos modos?")) return;
   $("#fSave").disabled=true;
-  try{ await saveEmpresa(data,editing&&editing.id); $("#dlgForm").close(); toast(editing?"Cambios guardados":"Empresa guardada") }
+  try{ const vis=await saveEmpresa(data,editing&&editing.id); $("#dlgForm").close(); toast((editing?"Cambios guardados":"Empresa guardada: «"+data.nombre+"»")+(vis?"":" (no se ve por los filtros activos)"),"ok") }
   catch(err){ if(err.clave) return logout(); $("#fErr").textContent=errTexto(err) }
   finally{ $("#fSave").disabled=false }
 });
@@ -1204,7 +1217,7 @@ function renderAloj(){
   const items=alojs.filter(a=>(!q||norm(a.pais+" "+(a.ciudad||"")+" "+(a.direcciones||[]).join(" ")).includes(q)) && (!qc||norm((a.contacto||"")+" "+(a.nombre||"")).includes(qc))).sort((a,b)=>(a.pais||"").localeCompare(b.pais||"","es")||(a.ciudad||"").localeCompare(b.ciudad||"","es"));
   if(!items.length){ const d=document.createElement("div"); d.className="empty-state"; d.style.gridColumn="1/-1"; d.innerHTML=alojs.length?"<strong>No hay alojamientos que coincidan</strong>Prueba con otro país, ciudad o contacto, o añade uno nuevo.":"<strong>Todavía no hay contactos de alojamiento</strong>Añade los que conozcáis con el botón «Añadir alojamiento»."; box.appendChild(d); return }
   items.forEach(a=>{
-    const c=document.createElement("article"); c.className="acard";
+    const c=document.createElement("article"); c.className="acard"+(a.id===flashId?" just-saved":""); c.dataset.id=a.id;
     const t=document.createElement("div"); t.className="t"; t.textContent=a.nombre;
     const m=document.createElement("div"); m.className="m"; m.textContent=[[a.ciudad,a.pais].filter(Boolean).join(", "),a.tipo,a.precio].filter(Boolean).join(" · ");
     c.append(t,m);
@@ -1220,7 +1233,7 @@ function openAloj(a){
   $("#aTitle").textContent=a?"Editar alojamiento":"Añadir alojamiento"; $("#aDel").hidden=!a;
   if(a){ ["nombre","pais","ciudad","tipo","precio","contacto","telefono","email","web","notas"].forEach(k=>f.elements[k].value=a[k]||"") }
   $("#dirList").innerHTML=""; const dirs=(a&&a.direcciones&&a.direcciones.length)?a.direcciones:[""]; dirs.forEach(d=>addDir(d));
-  $("#dlgAloj").showModal();
+  marcar($("#aForm")); $("#dlgAloj").showModal();
 }
 $("#aQ").addEventListener("input",renderAloj);
 $("#aC").addEventListener("input",renderAloj);
@@ -1234,7 +1247,7 @@ function addDir(val){
 }
 $("#dirAdd").addEventListener("click",()=>addDir("").focus());
 $("#btnAddAloj").addEventListener("click",()=>openAloj(null));
-$("#aCancel").addEventListener("click",()=>$("#dlgAloj").close());
+$("#aCancel").addEventListener("click",()=>tryClose($("#dlgAloj")));
 $("#aForm").addEventListener("submit",async ev=>{
   ev.preventDefault(); const f=ev.target; const g=k=>(f.elements[k].value||"").trim();
   if(!g("nombre")||!g("pais")){ $("#aErr").textContent="Falta el nombre o el país."; return }
@@ -1244,8 +1257,8 @@ $("#aForm").addEventListener("submit",async ev=>{
   $("#aSave").disabled=true;
   try{
     const j=await api("guardar",{tabla:"alojamientos",id:aEditing?aEditing.id:"",registro:data});
-    upsert(alojs,j.registro); guardarCache(); renderAloj(); stamp();
-    $("#dlgAloj").close(); toast("Alojamiento guardado");
+    upsert(alojs,j.registro); guardarCache(); flashId=j.registro.id; renderAloj(); stamp(); destacar('.acard[data-id="'+j.registro.id+'"]');
+    $("#dlgAloj").close(); toast("Alojamiento guardado: «"+data.nombre+"»","ok");
   }catch(err){ if(err.clave) return logout(); $("#aErr").textContent=errTexto(err) }
   finally{ $("#aSave").disabled=false }
 });
@@ -1360,7 +1373,7 @@ $("#insForm").addEventListener("submit",async ev=>{
   try{
     const j=await api("guardar",{tabla:"inscritos",id:insEditing?insEditing.id:"",registro:Object.assign({},insEditing||{estado:"activo"},{nombre:g("nombre"),apellidos:g("apellidos"),ciclo:g("ciclo")})});
     upsert(inscritos,j.registro); const was=!!insEditing; insEditing=null; f.reset(); $("#insSave").textContent="+ Añadir"; $("#insCancel").hidden=true;
-    renderAlumnado(); stamp(); toast(was?"Cambios guardados":"Inscrito añadido"); f.elements.nombre.focus();
+    renderAlumnado(); stamp(); toast(was?"Cambios guardados":"Inscrito añadido","ok"); f.elements.nombre.focus();
   }catch(err){ if(err.clave) return logout(); $("#insErr").textContent=errTexto(err) }
   finally{ $("#insSave").disabled=false }
 });
@@ -1466,7 +1479,7 @@ function openMov(a){
   $("#mTitle").textContent="Movilidad de "+a.nombre+" "+a.apellidos; $("#mSub").textContent=(a.ciclo||"")+" · Nota final "+f2(notaFinal(a));
   fillMovSelects(a); f.elements.empresa_id.value=a.empresa_id||""; fillAloj(a.alojamiento_id);
   ["fecha_inicio","fecha_fin","notas"].forEach(k=>f.elements[k].value=a[k]||"");
-  $("#dlgMov").showModal();
+  marcar($("#movForm")); $("#dlgMov").showModal();
 }
 $("#movForm").elements.empresa_id.addEventListener("input",()=>fillAloj($("#movForm").elements.alojamiento_id.value));
 $("#movForm").addEventListener("submit",async ev=>{
@@ -1475,7 +1488,7 @@ $("#movForm").addEventListener("submit",async ev=>{
   const cur=inscritos.find(x=>x.id===movEditing.id)||movEditing;
   const reg=Object.assign({},cur,{empresa_id:g("empresa_id"),alojamiento_id:g("alojamiento_id"),fecha_inicio:g("fecha_inicio"),fecha_fin:g("fecha_fin"),notas:g("notas")});
   $("#mSave").disabled=true;
-  try{ const j=await api("guardar",{tabla:"inscritos",id:movEditing.id,registro:reg}); upsert(inscritos,j.registro); renderAlumnado(); stamp(); $("#dlgMov").close(); toast("Movilidad guardada") }
+  try{ const j=await api("guardar",{tabla:"inscritos",id:movEditing.id,registro:reg}); upsert(inscritos,j.registro); renderAlumnado(); stamp(); $("#dlgMov").close(); toast("Movilidad guardada","ok") }
   catch(err){ if(err.clave) return logout(); $("#mErr").textContent=errTexto(err) }
   finally{ $("#mSave").disabled=false }
 });
