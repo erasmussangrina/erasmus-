@@ -118,8 +118,11 @@ header.hero{padding:1.8rem 0 1.6rem}
 .dir-row button{flex:none;padding:.4rem .7rem}
 .acard ul.dirs{margin:.2rem 0;padding-left:1.1rem;font-size:.92rem}
 .acard ul.dirs li{margin:.15rem 0;overflow-wrap:anywhere}
-.hero .steps{padding:1rem 0 .4rem}
-.howto{margin:0 0 1.6rem}
+.howto .steps{padding:1rem 0 .4rem}
+.steps.steps3{grid-template-columns:repeat(3,1fr)}
+.steps.steps2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:760px){ .steps.steps3,.steps.steps2{grid-template-columns:1fr} }
+.howto{margin:0 0 1rem}
 .howto summary{cursor:pointer;display:inline-block;font-weight:700;color:var(--teal);padding:.35rem .8rem;border:1px solid var(--line);border-radius:999px;background:var(--panel);list-style:none}
 .howto summary::-webkit-details-marker{display:none}
 .howto[open] summary{background:var(--teal-soft)}
@@ -195,6 +198,32 @@ header.hero{padding:1.8rem 0 1.6rem}
 .res-ol{margin:0;padding-left:1.4rem}
 .res-ol li{margin:.2rem 0}
 .st-activo{color:var(--ink-soft)} .st-renuncia{color:var(--warn)} .st-excluido{color:var(--no)}
+.btn-print{background:var(--panel);border:1.5px solid var(--ink);color:var(--ink);font-weight:700}
+.btn-print:hover{background:var(--ink);color:var(--paper)}
+.sub-row{display:flex;justify-content:space-between;align-items:flex-end;gap:.6rem;flex-wrap:wrap;border-bottom:2px solid var(--line);margin:.4rem 0 1rem}
+.sub-row .subtabs{border-bottom:0;margin:0}
+.sub-row .btn-print{margin-bottom:.4rem}
+#printArea{display:none}
+@media print{
+  @page{size:A4 landscape;margin:12mm}
+  body.printing{background:#fff!important;color:#000!important;overflow:visible!important}
+  body.printing>*:not(#printArea){display:none!important}
+  body.printing #printArea{display:block!important;font-family:"Segoe UI",Arial,sans-serif;font-size:9.5pt;color:#000}
+  #printArea .p-head{border-bottom:2px solid #000;margin-bottom:8pt;padding-bottom:4pt;display:flex;justify-content:space-between;align-items:flex-end;gap:10pt}
+  #printArea .p-brand{font-size:8pt;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+  #printArea h1{font-size:15pt;margin:2pt 0 0}
+  #printArea h2{font-size:11.5pt;margin:12pt 0 4pt;break-after:avoid}
+  #printArea .p-date,#printArea .p-meta{font-size:8pt;color:#333}
+  #printArea table{width:100%;border-collapse:collapse;margin-bottom:6pt}
+  #printArea th,#printArea td{border:0.5pt solid #777;padding:2.5pt 4pt;text-align:left;vertical-align:top}
+  #printArea th{background:#eee;font-size:8pt}
+  #printArea tr{break-inside:avoid}
+  #printArea .p-line td{background:#fde2e2;text-align:center;font-weight:700;font-size:8pt}
+  #printArea .p-sel td{background:#eaf5ee}
+  #printArea .p-chips{display:flex;flex-wrap:wrap;gap:6pt;margin:4pt 0 8pt}
+  #printArea .p-chips span{border:0.5pt solid #777;border-radius:3pt;padding:2pt 6pt}
+  #printArea .num{text-align:right;white-space:nowrap}
+}
 .soon .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem;margin-top:1.5rem}
 .soon .card{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:1.2rem}
 .soon .card h3{font-family:var(--display);margin:0 0 .3rem}
@@ -334,20 +363,18 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
 <header class="hero" id="top">
   <div class="wrap">
     <p class="eyebrow">ERASMUS+ · ACCIÓN CLAVE 1 · MOVILIDAD DE ESTUDIANTES DE FP (VET)</p>
-    <h1>Empresas de acogida + alojamiento para prácticas Erasmus+ de FP Básica y Grado Medio</h1>
-    <p class="lead">Directorio de empresas en Europa para las movilidades de alumnado de FP: dónde buscar, a quién contactar y en qué punto está cada contacto.</p>
-    <details class="howto">
-    <summary>❓ ¿Cómo funciona?</summary>
-    <section class="steps" aria-label="Cómo funciona">
-  <div class="step"><span class="n">1</span><div><strong>Busca empresa añadida</strong><p>Escribe una palabra o usa los desplegables para buscar empresas añadidas.</p></div></div>
-  <div class="step"><span class="n">2</span><div><strong>Abre la ficha</strong><p>Pulsa sobre una empresa para ver sus datos y copiar el correo modelo en su idioma.</p></div></div>
-  <div class="step"><span class="n">3</span><div><strong>Añade o actualiza</strong><p>Con «Añadir una empresa nueva» registras las que encuentres; desde su ficha, «Editar» cambia su estado.</p></div></div>
-  <div class="step"><span class="n">4</span><div><strong>Busca alojamiento añadido</strong><p>En <a href="#alojamientos">Alojamientos</a>, escribe un país o una ciudad para ver los contactos de alquiler guardados. También puedes añadir nuevos.</p></div></div>
-</section>
-    </details>
+    
     <div class="sec-head">
       <h2 class="sec-title">Empresas</h2>
     </div>
+    <details class="howto">
+    <summary>❓ ¿Cómo funciona?</summary>
+    <section class="steps steps3" aria-label="Cómo funciona">
+  <div class="step"><span class="n">1</span><div><strong>Busca empresa añadida</strong><p>Escribe una palabra o usa los desplegables para buscar empresas añadidas.</p></div></div>
+  <div class="step"><span class="n">2</span><div><strong>Abre la ficha</strong><p>Pulsa sobre una empresa para ver sus datos y copiar el correo modelo en su idioma.</p></div></div>
+  <div class="step"><span class="n">3</span><div><strong>Añade o actualiza</strong><p>Con «Añadir una empresa nueva» registras las que encuentres; desde su ficha, «Editar» cambia su estado.</p></div></div>
+    </section>
+    </details>
     <div class="board" aria-label="Resumen de destinos por país">
       <div class="board-head" aria-hidden="true"><span>Destino</span><span class="c-ok">Aceptan</span><span class="c-wait">En espera</span><span class="c-new">Sin contactar</span><span class="c-no">Rechazan</span></div>
       <div class="board-rows" id="board"></div>
@@ -396,6 +423,7 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
       <div class="summary">
         <h2 id="count">Empresas</h2>
         <div class="actions">
+          <button class="btn-print" id="prEmp" type="button">🖨 Imprimir / PDF</button>
           <button class="ghost" id="btnCsv" type="button">Exportar CSV</button>
         </div>
       </div>
@@ -455,7 +483,15 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
   <section class="aloj" id="alojamiento">
     <div class="sec-head">
       <h2 class="sec-title">Alojamientos</h2>
+      <button class="btn-print" id="prAloj" type="button">🖨 Imprimir / PDF</button>
     </div>
+    <details class="howto">
+    <summary>❓ ¿Cómo funciona?</summary>
+    <section class="steps steps2" aria-label="Cómo funciona">
+      <div class="step"><span class="n">1</span><div><strong>Busca alojamiento añadido</strong><p>Pulsa un país en el tablero o escribe un país, una ciudad o la persona de contacto en «Buscar alojamientos añadidos» para ver los contactos de alquiler guardados.</p></div></div>
+      <div class="step"><span class="n">2</span><div><strong>Añade o actualiza</strong><p>Con «+ Añadir un alojamiento nuevo» registras un contacto, con todas sus direcciones si tiene varios pisos o habitaciones; desde su ficha, «Editar» cambia sus datos.</p></div></div>
+    </section>
+    </details>
     <div class="board" aria-label="Resumen de alojamientos por país" style="margin-bottom:1.2rem">
       <div class="board-head aboard" aria-hidden="true"><span>Destino</span><span>Alojamientos</span><span>Direcciones</span></div>
       <div class="board-rows" id="alojBoard"></div>
@@ -528,11 +564,14 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
       </form>
     </details>
 
+    <div class="sub-row">
     <nav class="subtabs" aria-label="Fases de la convocatoria">
       <button type="button" data-tab="insc">1 · Inscripción</button>
       <button type="button" data-tab="pruebas">2 · Pruebas de selección</button>
       <button type="button" data-tab="sel">3 · Seleccionados</button>
     </nav>
+    <button class="btn-print" id="prAlum" type="button" title="Imprime la fase que tienes abierta">🖨 Imprimir / PDF</button>
+    </div>
 
     <!-- FASE 1 -->
     <div data-tab-panel="insc">
@@ -801,6 +840,7 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
   </form>
 </dialog>
 
+<div id="printArea" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -1456,6 +1496,59 @@ $("#rkCsv").addEventListener("click",()=>{
 });
 $("#selCsv").addEventListener("click",()=>{ const r=ranking(); descargarCSV("seleccionados_erasmus.csv",["Puesto","Apellidos","Nombre","Ciclo","Nota final","Empresa","País","Ciudad","Alojamiento","Inicio","Fin","Notas"],
   r.sel.map((a,i)=>{ const e=empresas.find(x=>x.id===a.empresa_id)||{}; return [i+1,a.apellidos,a.nombre,a.ciclo,f2(notaFinal(a)),e.nombre||"",e.pais||"",e.ciudad||"",nombreAloj(a.alojamiento_id),a.fecha_inicio?fechaES(a.fecha_inicio):"",a.fecha_fin?fechaES(a.fecha_fin):"",a.notas||""] })) });
+
+/* ---------- Imprimir / PDF ---------- */
+const H=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function tablaHTML(cab,filas,clases){ return "<table><thead><tr>"+cab.map(c=>"<th>"+H(c)+"</th>").join("")+"</tr></thead><tbody>"+filas.map((f,i)=>f.__line?'<tr class="p-line"><td colspan="'+cab.length+'">'+H(f.__line)+"</td></tr>":"<tr"+(clases&&clases[i]?' class="'+clases[i]+'"':"")+">"+f.map(v=>"<td>"+H(v).replace(/\n/g,"<br>")+"</td>").join("")+"</tr>").join("")+"</tbody></table>" }
+function imprimir(titulo,cuerpo,meta){
+  const hoy=new Date().toLocaleDateString("es-ES",{day:"numeric",month:"long",year:"numeric"});
+  $("#printArea").innerHTML='<div class="p-head"><div><div class="p-brand">Área de Internacional: Erasmus+</div><h1>'+H(titulo)+'</h1>'+(meta?'<div class="p-meta">'+H(meta)+'</div>':"")+'</div><div class="p-date">Generado el '+H(hoy)+'</div></div>'+cuerpo;
+  document.body.classList.add("printing");
+  setTimeout(()=>window.print(),50);
+}
+window.addEventListener("afterprint",()=>{ document.body.classList.remove("printing"); $("#printArea").innerHTML="" });
+function filtrosActivos(){
+  const f=[]; const add=(lab,sel)=>{ const el=$(sel); if(el.value) f.push(lab+": "+(el.options?el.options[el.selectedIndex].text:el.value)) };
+  if($("#q").value.trim()) f.push("Palabra clave: «"+$("#q").value.trim()+"»");
+  add("País","#fPais"); add("Ciclo","#fCiclo"); add("Familia","#fFam"); add("Estado","#fEstado"); add("Responsable","#fResp");
+  if(soloAviso) f.push("Solo sin respuesta");
+  return f.length?"Filtros: "+f.join(" · "):"Todas las empresas";
+}
+$("#prEmp").addEventListener("click",()=>{
+  const lista=filtered();
+  const porPais={}; lista.forEach(e=>{ const v=(porPais[e.pais||"—"]=porPais[e.pais||"—"]||{n:0,ok:0}); v.n++; if(e.estado==="acepta") v.ok++ });
+  const chips='<div class="p-chips">'+Object.entries(porPais).map(([p,v])=>"<span>"+H(p)+": "+v.n+" (aceptan "+v.ok+")</span>").join("")+"</div>";
+  const filas=lista.map(e=>[e.nombre,[e.ciudad,e.pais].filter(Boolean).join(", "),(e.ciclos||[]).join(", "),ESTADOS[e.estado]||ESTADOS.pendiente,e.responsable||"",e.ultimo_contacto?fechaES(e.ultimo_contacto):"",[e.contacto,e.email,e.telefono].filter(Boolean).join("\n"),e.web||""]);
+  imprimir("Empresas de acogida",chips+tablaHTML(["Empresa","Ubicación","Ciclos","Estado","Responsable","Último contacto","Contacto","Web"],filas),lista.length+" empresas · "+filtrosActivos());
+});
+$("#prAloj").addEventListener("click",()=>{
+  const q=norm($("#aQ").value.trim()), qc=norm($("#aC").value.trim());
+  const lista=alojs.filter(a=>(!q||norm(a.pais+" "+(a.ciudad||"")+" "+(a.direcciones||[]).join(" ")).includes(q))&&(!qc||norm((a.contacto||"")+" "+(a.nombre||"")).includes(qc))).sort((a,b)=>(a.pais||"").localeCompare(b.pais||"","es")||(a.ciudad||"").localeCompare(b.ciudad||"","es"));
+  const filas=lista.map(a=>[a.nombre,[a.ciudad,a.pais].filter(Boolean).join(", "),a.tipo||"",a.precio||"",[a.contacto,a.telefono,a.email].filter(Boolean).join("\n"),(a.direcciones||[]).join("\n"),a.web||"",a.notas||""]);
+  const meta=lista.length+" alojamientos"+(q||qc?" · Búsqueda: "+[$("#aQ").value.trim(),$("#aC").value.trim()].filter(Boolean).join(" · "):"");
+  imprimir("Alojamientos",tablaHTML(["Nombre / arrendador","Ubicación","Tipo","Precio","Contacto","Direcciones","Web","Notas"],filas),meta);
+});
+$("#prAlum").addEventListener("click",()=>{
+  const r=ranking(), P=r.P, act=inscritos.filter(a=>sit(a)==="activo").length;
+  const resumen='<div class="p-chips"><span>Inscritos activos: '+act+'</span><span>Plazas: '+P+'</span><span>'+(act<P?"Faltan "+(P-act):act>P?"Sobran "+(act-P):"Inscritos = plazas")+'</span><span>Inscripción hasta el '+H(fechaES(cfg("fecha_limite")))+'</span></div>';
+  if(tab==="insc"){
+    const filas=inscritos.slice().sort(ordenCiclo).map((a,i)=>[i+1,a.apellidos,a.nombre,a.ciclo,SIT[sit(a)]]);
+    imprimir("Inscripción · alumnado inscrito",resumen+tablaHTML(["Nº","Apellidos","Nombre","Ciclo","Situación"],filas));
+  }else if(tab==="pruebas"){
+    const cab=["Puesto","Apellidos","Nombre","Ciclo"].concat(CRITERIOS.map(([n,p,l])=>l+" ("+cfg(p)+" %)")).concat(["Nota final","Resultado"]);
+    const fila=(a,pos,res)=>[pos||"",a.apellidos,a.nombre,a.ciclo].concat(CRITERIOS.map(([k])=>a[k]?String(a[k]).replace(".",","):"")).concat([f2(notaFinal(a)),res]);
+    const filas=[], cls=[];
+    r.con.forEach((a,i)=>{ if(i===P){ filas.push({__line:"Límite de plazas ("+P+") · lista de reserva"}); cls.push("") } filas.push(fila(a,i+1,i<P?"Seleccionado":"Reserva "+(i-P+1))); cls.push(i<P?"p-sel":"") });
+    r.sin.forEach(a=>{ filas.push(fila(a,"","Faltan notas")); cls.push("") });
+    r.fuera.forEach(a=>{ filas.push(fila(a,"",SIT[sit(a)])); cls.push("") });
+    imprimir("Acta de las pruebas de selección",resumen+tablaHTML(cab,filas,cls),"Nota final = media ponderada de las pruebas");
+  }else{
+    const filas=r.sel.map((a,i)=>{ const e=empresas.find(x=>x.id===a.empresa_id); return [i+1,a.apellidos+", "+a.nombre,a.ciclo,f2(notaFinal(a)),e?e.nombre+" ("+[e.ciudad,e.pais].filter(Boolean).join(", ")+")":"",nombreAloj(a.alojamiento_id),rangoFechas(a),a.notas||""] });
+    let cuerpo=resumen+tablaHTML(["Nº","Alumno/a","Ciclo","Nota final","Empresa","Alojamiento","Fechas","Notas"],filas);
+    if(r.res.length) cuerpo+="<h2>Lista de reserva</h2>"+tablaHTML(["Orden","Alumno/a","Ciclo","Nota final"],r.res.map((a,i)=>[i+1,a.apellidos+", "+a.nombre,a.ciclo,f2(notaFinal(a))]));
+    imprimir("Alumnado seleccionado y movilidades",cuerpo);
+  }
+});
 
 /* ---------- CSV ---------- */
 $("#btnCsv").addEventListener("click",async()=>{
