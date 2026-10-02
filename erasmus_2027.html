@@ -156,6 +156,29 @@ header.hero{padding:1.8rem 0 1.6rem}
 .lk span{font-size:.85rem;color:var(--ink-soft);line-height:1.35}
 .lk:hover{border-color:var(--teal);background:var(--teal-soft)}
 #dlgLinks{width:min(820px,94vw)}
+.lk-wrap{position:relative;display:grid}
+.lk-wrap .lk{padding-right:2.2rem}
+.lk-wrap .lk-x{position:absolute;top:.35rem;right:.35rem;width:1.7rem;height:1.7rem;padding:0;border-radius:50%;font-size:.8rem;line-height:1;color:var(--no);background:var(--panel)}
+.lk-extra{border-left-color:var(--amber)}
+.lk-head{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between;margin:-.5rem 0 0}
+.lk-form{border:1px dashed var(--line);border-radius:10px;padding:.8rem;background:var(--paper);display:grid;gap:.6rem}
+.add-ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.6rem}
+.add-way{border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:.6rem .8rem;background:var(--paper);font-size:.87rem;line-height:1.4}
+.add-way strong{display:block;font-family:var(--display);color:var(--teal);margin-bottom:.2rem}
+.add-way ol{margin:.2rem 0 .4rem;padding-left:1.1rem}
+.add-way{display:grid;gap:.35rem;align-content:start;cursor:pointer}
+.add-way .way-h{display:flex;gap:.45rem;align-items:center;font-family:var(--display);font-weight:700;color:var(--teal)}
+.add-way .way-h input[type=radio]{width:1.05rem;height:1.05rem;min-width:0;flex:none;margin:0;padding:0;accent-color:var(--teal)}
+.add-way.way-pc{border-left-color:var(--amber)}
+.add-way.way-pc .way-h{color:#9A6A00}
+.add-way .way-note{color:var(--ink-soft)}
+.add-way .btn-link{font-size:.85rem;justify-self:start}
+.add-way input[type=file]{font-size:.85rem;max-width:100%}
+.add-way.on{background:var(--teal-soft);border-color:var(--teal)}
+.add-way.way-pc.on{background:#FFF6DD;border-color:var(--amber)}
+.add-way:not(.on) ol,.add-way:not(.on) .btn-link,.add-way:not(.on) input[type=file]{opacity:.55}
+.docof-restore{margin-top:1rem;text-align:right}
+.docof-restore button{font-size:.85rem}
 .alert{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between;background:#FFF1E0;border:1px solid #F0C48A;border-left:6px solid var(--warn);border-radius:10px;padding:.7rem 1rem;margin:0 0 .8rem;color:#5A3A00}
 .alert button{background:var(--panel);border-color:#F0C48A;padding:.35rem .8rem;font-size:.9rem}
 .row .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-size:.85rem;color:var(--ink-soft)}
@@ -743,10 +766,10 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
   <section class="wrap soon">
     <p class="eyebrow" style="font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--teal);margin:0">ERASMUS+ · ACCIÓN CLAVE 1 · MOVILIDAD DE ESTUDIANTES DE FP (VET)</p>
     <h1>Documentos Erasmus+</h1>
-    <p class="sub" style="max-width:760px">Documentación oficial del proyecto y del programa. Se abren en una pestaña nueva o se descargan. También puedes añadir enlaces a otros documentos (por ejemplo, de Google Drive).</p>
+    <p class="sub" style="max-width:760px">Documentación oficial del proyecto y del programa. Se abren en una pestaña nueva o se descargan. Puedes <b>añadir documentos</b> enlazados desde Google Drive u otra web, o <b>subir archivos</b> directamente desde tu ordenador, y <b>quitar</b> los que no necesites.</p>
     <div class="tools-head" style="margin-top:1rem">
       <div></div>
-      <button class="primary" id="btnDocOf" type="button">＋ Añadir documento (enlace)</button>
+      <button class="primary" id="btnDocOf" type="button">＋ Añadir documento (Drive u ordenador)</button>
     </div>
     <div id="docsOficiales"></div>
   </section>
@@ -772,7 +795,17 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
   <form class="dlg" id="docOfForm" novalidate>
     <button type="button" class="dlg-x" data-close aria-label="Cerrar" title="Cerrar">✕</button>
     <h2 id="doTitle">＋ Añadir documento</h2>
-    <p class="help" style="margin:-.6rem 0 0">Pega el enlace del documento (Google Drive, web del SEPIE…). Si es de Drive, compártelo con tus compañeras para que puedan abrirlo.</p>
+    <p class="help" style="margin:-.6rem 0 0">Elige cómo quieres añadirlo:</p>
+    <div class="add-ways">
+      <label class="add-way" id="wayLink"><span class="way-h"><input type="radio" name="modo" value="enlace" checked> 📁 Desde Google Drive o una web</span>
+        <ol><li>En Drive, abre el archivo y pulsa <b>Compartir</b>.</li><li>Elige «Restringido» o «Cualquier persona con el enlace» y pulsa <b>Copiar enlace</b>.</li><li>Pégalo abajo, en «Enlace».</li></ol>
+        <span class="way-note">Si es de una web (SEPIE, Comisión…), copia la dirección del navegador.</span>
+        <a class="btn-link" href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener">Abrir Google Drive ↗</a></label>
+      <label class="add-way way-pc" id="wayFile"><span class="way-h"><input type="radio" name="modo" value="archivo"> 💻 Archivo del ordenador</span>
+        <span class="way-note">Sube un Word, PDF, imagen… desde Descargas, el Escritorio, etc. Lo verán tus compañeras desde cualquier ordenador y, al quitarlo de la lista, se borra. Máximo 10 MB.</span>
+        <input type="file" name="archivo" id="docOfFile" accept=".pdf,.doc,.docx,.odt,.xls,.xlsx,.ods,.ppt,.pptx,.odp,.txt,.csv,.jpg,.jpeg,.png,.zip">
+        <span class="way-note" id="docOfFileInfo"></span></label>
+    </div>
     <div class="grid2">
       <label class="f full">Título
         <input name="titulo" maxlength="120" required>
@@ -781,8 +814,8 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
         <input name="cat" maxlength="40" list="docOfCats" placeholder="Convenio, Guías…" required>
         <datalist id="docOfCats"></datalist>
       </label>
-      <label class="f">Enlace
-        <input name="url" type="url" maxlength="800" placeholder="https://…" required>
+      <label class="f" id="docOfUrlBox">Enlace
+        <input name="url" type="url" maxlength="800" placeholder="https://…">
       </label>
       <label class="f full">Descripción (opcional)
         <input name="desc" maxlength="200">
@@ -851,8 +884,29 @@ dl.det dd{margin:0;overflow-wrap:anywhere}
   <div class="dlg">
     <button type="button" class="dlg-x" data-close aria-label="Cerrar" title="Cerrar">✕</button>
     <h2 id="lkTitle">🔗 Enlaces de interés Erasmus+</h2>
-    <p class="help" style="margin:-.5rem 0 0">Se abren en una pestaña nueva.</p>
-    <div class="lk-grid">
+    <div class="lk-head">
+      <p class="help" style="margin:0">Se abren en una pestaña nueva. Los enlaces añadidos se ven en todos los ordenadores.</p>
+      <button class="primary" id="btnLkAdd" type="button">＋ Añadir enlace</button>
+    </div>
+    <form class="lk-form" id="lkForm" novalidate hidden>
+      <div class="grid2">
+        <label class="f">Nombre del enlace
+          <input name="titulo" maxlength="100" required placeholder="Ej.: Web del SEPIE">
+        </label>
+        <label class="f">Dirección (URL)
+          <input name="url" type="url" maxlength="800" required placeholder="https://…">
+        </label>
+        <label class="f full">Descripción (opcional)
+          <input name="desc" maxlength="150" placeholder="Para qué sirve">
+        </label>
+      </div>
+      <p class="notice" id="lkMsg" role="alert" style="color:var(--no);margin:0"></p>
+      <div class="dlg-actions">
+        <button class="ghost" type="button" id="lkCancel">Cancelar</button>
+        <button class="primary" type="submit" id="lkSave">Guardar enlace</button>
+      </div>
+    </form>
+    <div class="lk-grid" id="lkGrid">
         <a class="lk" href="https://webgate.ec.europa.eu/erasmus-esc/index/" target="_blank" rel="noopener"><strong>Plataforma Erasmus+ (Beneficiary Module) ↗</strong><span>Gestión de proyectos y movilidades</span></a>
         <a class="lk" href="https://www.sepie.es/formacion-profesional.html" target="_blank" rel="noopener"><strong>SEPIE · Formación Profesional ↗</strong><span>Convocatorias y documentación de FP</span></a>
         <a class="lk" href="https://www.sepie.es/comunicacion/jornadas/index.html#informacion" target="_blank" rel="noopener"><strong>SEPIE · Jornadas ↗</strong><span>Jornadas informativas y de formación</span></a>
@@ -2221,10 +2275,13 @@ const DOCS_OF_FIJOS=[
   {cat:"Guías y normativa",ico:"📘",tit:"Guía del Programa Erasmus+ 2026",desc:"Versión en español (v1, 12/11/2025). Normas oficiales del programa (505 páginas).",url:"documentos/guia_programa_erasmus_2026.pdf",online:"https://erasmus-plus.ec.europa.eu/es/programme-guide/erasmus-programme-guide"},
   {cat:"Financiación",ico:"💶",tit:"Información sobre financiación · Convocatoria 2026 (SEPIE)",desc:"Importes del apoyo individual por país y duración; FP en el apartado 3.2 (versión 22/07/2026).",url:"documentos/financiacion_sepie_convocatoria_2026.pdf"}
 ];
-function docsOfExtra(){ return config.filter(c=>String(c.id).startsWith("docof_")).map(c=>{ let d={}; try{ d=JSON.parse(c.valor||"{}") }catch(e){} return {id:c.id,tit:c.nombre,cat:d.cat||"Otros",url:d.url||"",desc:d.desc||"",ico:"🔗",extra:true} }) }
+function docsOfExtra(){ return config.filter(c=>String(c.id).startsWith("docof_")).map(c=>{ let d={}; try{ d=JSON.parse(c.valor||"{}") }catch(e){} return {id:c.id,tit:c.nombre,cat:d.cat||"Otros",url:d.url||"",desc:d.desc||"",ico:d.archivo_id?"📎":(/drive\.google|docs\.google/i.test(d.url||"")?"📁":"🔗"),archivo_id:d.archivo_id||"",extra:true} }) }
+function docOfOcultoId(d){ return "docofoculto_"+String(d.url).split("/").pop().replace(/\.[a-z0-9]+$/i,"").replace(/[^a-z0-9_-]/gi,"_") }
+function docsOfOcultos(){ return config.filter(c=>String(c.id).startsWith("docofoculto_")) }
 function renderDocsOf(){
   const box=$("#docsOficiales"); if(!box) return; box.innerHTML="";
-  const todos=DOCS_OF_FIJOS.concat(docsOfExtra());
+  const ocultos=new Set(docsOfOcultos().map(c=>String(c.id)));
+  const todos=DOCS_OF_FIJOS.filter(d=>!ocultos.has(docOfOcultoId(d))).concat(docsOfExtra());
   const cats=DOCS_OF_CAT.concat([...new Set(todos.map(d=>d.cat))].filter(c=>!DOCS_OF_CAT.includes(c)).sort((a,b)=>a.localeCompare(b,"es")));
   const dl=$("#docOfCats"); if(dl){ dl.innerHTML=""; cats.forEach(c=>opt(dl,c,c)) }
   cats.forEach(cat=>{
@@ -2238,29 +2295,105 @@ function renderDocsOf(){
       c.querySelector(".doc-ico").textContent=d.ico; c.querySelector("strong").textContent=d.tit; c.querySelector(".doc-txt span").textContent=d.desc;
       const bt=c.querySelector(".doc-btns");
       const a=document.createElement("a"); a.className="btn-link primary"; a.href=d.url; a.target="_blank"; a.rel="noopener"; a.textContent=d.extra?"Abrir ↗":"👁 Ver PDF"; bt.appendChild(a);
+      if(d.extra&&d.archivo_id){ const b=document.createElement("a"); b.className="btn-link"; b.href="https://drive.google.com/uc?export=download&id="+encodeURIComponent(d.archivo_id); b.target="_blank"; b.rel="noopener"; b.textContent="⬇ Descargar"; bt.appendChild(b) }
       if(!d.extra){ const b=document.createElement("a"); b.className="btn-link"; b.href=d.url; b.setAttribute("download",""); b.textContent="⬇ Descargar"; bt.appendChild(b);
         if(d.online){ const o=document.createElement("a"); o.className="btn-link"; o.href=d.online; o.target="_blank"; o.rel="noopener"; o.textContent="🌐 Versión online ↗"; bt.appendChild(o) } }
-      else{ const x=document.createElement("button"); x.type="button"; x.className="danger"; x.textContent="Quitar"; x.addEventListener("click",async()=>{ if(!confirm("¿Quitar «"+d.tit+"» de la lista? (El documento original no se borra.)")) return;
-        try{ await api("borrar",{tabla:"config",id:d.id}); config=config.filter(z=>z.id!==d.id); renderDocsOf(); stamp(); toast("Documento quitado") }catch(err){ if(err.clave) return logout(); toast(errTexto(err)) } }); bt.appendChild(x) }
+      const x=document.createElement("button"); x.type="button"; x.className="danger"; x.textContent="Quitar"; x.addEventListener("click",async()=>{ if(!confirm(d.archivo_id?"¿Quitar «"+d.tit+"»? El archivo subido se borrará.":"¿Quitar «"+d.tit+"» de la lista? (El documento original no se borra.)")) return;
+        try{
+          if(d.extra){ await api(d.archivo_id?"borrar_doc":"borrar",d.archivo_id?{id:d.id}:{tabla:"config",id:d.id}); config=config.filter(z=>z.id!==d.id) }
+          else{ const j=await api("guardar",{tabla:"config",id:docOfOcultoId(d),registro:{nombre:d.tit,valor:"oculto"}}); upsert(config,j.registro) }
+          renderDocsOf(); stamp(); toast("Documento quitado")
+        }catch(err){ if(err.clave) return logout(); toast(errTexto(err)) } }); bt.appendChild(x)
       g.appendChild(c);
     });
     sec.appendChild(g); box.appendChild(sec);
   });
+  if(!todos.length){ const e=document.createElement("div"); e.className="empty-state"; e.textContent="No hay documentos. Pulsa «＋ Añadir documento» para añadir uno."; box.appendChild(e) }
+  const oc=docsOfOcultos();
+  if(oc.length){
+    const w=document.createElement("div"); w.className="docof-restore";
+    const b=document.createElement("button"); b.type="button"; b.className="ghost"; b.textContent="↺ Volver a mostrar los documentos oficiales quitados ("+oc.length+")";
+    b.addEventListener("click",async()=>{ if(!confirm("¿Volver a mostrar: "+oc.map(c=>"«"+c.nombre+"»").join(", ")+"?")) return;
+      try{ for(const c of oc){ await api("borrar",{tabla:"config",id:c.id}) } config=config.filter(z=>!String(z.id).startsWith("docofoculto_")); renderDocsOf(); stamp(); toast("Documentos restaurados","ok") }
+      catch(err){ if(err.clave) return logout(); toast(errTexto(err)) } });
+    w.appendChild(b); box.appendChild(w);
+  }
 }
-$("#btnDocOf").addEventListener("click",()=>{ const f=$("#docOfForm"); f.reset(); $("#docOfMsg").textContent=""; renderDocsOf(); $("#dlgDocOf").showModal(); f.elements.titulo.focus() });
+const DOC_MAX=10*1024*1024;
+function docOfModo(){ return ($("#docOfForm").elements.modo.value)||"enlace" }
+function docOfModoUI(){ const m=docOfModo(); $("#wayLink").classList.toggle("on",m==="enlace"); $("#wayFile").classList.toggle("on",m==="archivo"); $("#docOfUrlBox").hidden=m!=="enlace"; $("#docOfSave").textContent=m==="archivo"?"Subir y guardar":"Guardar" }
+document.querySelectorAll("#docOfForm [name=modo]").forEach(x=>x.addEventListener("change",docOfModoUI));
+$("#docOfFile").addEventListener("change",()=>{
+  const fl=$("#docOfFile").files[0]; const f=$("#docOfForm"); $("#docOfFileInfo").textContent="";
+  if(!fl) return;
+  f.elements.modo.value="archivo"; docOfModoUI();
+  $("#docOfFileInfo").textContent=fl.name+" · "+(fl.size<1048576?Math.max(1,Math.round(fl.size/1024))+" KB":(fl.size/1048576).toFixed(1).replace(".",",")+" MB")+(fl.size>DOC_MAX?" — demasiado grande (máx. 10 MB)":"");
+  if(!f.elements.titulo.value.trim()) f.elements.titulo.value=fl.name.replace(/\.[^.]+$/,"").replace(/[_-]+/g," ");
+});
+function leerBase64(fl){ return new Promise((res,rej)=>{ const rd=new FileReader(); rd.onload=()=>res(String(rd.result).split(",")[1]||""); rd.onerror=()=>rej(new Error("No se pudo leer el archivo.")); rd.readAsDataURL(fl) }) }
+$("#btnDocOf").addEventListener("click",()=>{ const f=$("#docOfForm"); f.reset(); $("#docOfMsg").textContent=""; $("#docOfFileInfo").textContent=""; docOfModoUI(); renderDocsOf(); $("#dlgDocOf").showModal(); f.elements.titulo.focus() });
 $("#docOfForm").addEventListener("submit",async ev=>{
-  ev.preventDefault(); const f=ev.target; const g=k=>(f.elements[k].value||"").trim();
-  if(!g("titulo")||!g("cat")||!g("url")){ $("#docOfMsg").textContent="Rellena título, apartado y enlace."; return }
-  if(!/^https?:\/\//i.test(g("url"))){ $("#docOfMsg").textContent="El enlace debe empezar por https://"; return }
-  $("#docOfSave").disabled=true;
+  ev.preventDefault(); const f=ev.target; const g=k=>(f.elements[k].value||"").trim(); const m=docOfModo();
+  const fl=$("#docOfFile").files[0];
+  if(m==="archivo"){
+    if(!fl){ $("#docOfMsg").textContent="Elige el archivo del ordenador."; return }
+    if(fl.size>DOC_MAX){ $("#docOfMsg").textContent="El archivo pasa de 10 MB. Para archivos grandes, usa la opción de Google Drive."; return }
+    if(!g("titulo")||!g("cat")){ $("#docOfMsg").textContent="Rellena título y apartado."; return }
+  }else{
+    if(!g("titulo")||!g("cat")||!g("url")){ $("#docOfMsg").textContent="Rellena título, apartado y enlace."; return }
+    if(!/^https?:\/\//i.test(g("url"))){ $("#docOfMsg").textContent="El enlace debe empezar por https://"; return }
+  }
+  const btn=$("#docOfSave"); const txt=btn.textContent; btn.disabled=true;
   try{
-    const id="docof_"+Date.now().toString(36);
-    const j=await api("guardar",{tabla:"config",id,registro:{nombre:g("titulo"),valor:JSON.stringify({cat:g("cat"),url:g("url"),desc:g("desc")})}});
-    upsert(config,j.registro); renderDocsOf(); stamp(); $("#dlgDocOf").close(); toast("Documento añadido","ok");
-  }catch(err){ if(err.clave) return logout(); $("#docOfMsg").textContent=errTexto(err) }
-  finally{ $("#docOfSave").disabled=false }
+    let j;
+    if(m==="archivo"){
+      btn.textContent="Subiendo…"; $("#docOfMsg").textContent="";
+      const datos=await leerBase64(fl);
+      j=await api("subir",{titulo:g("titulo"),cat:g("cat"),desc:g("desc"),nombre_archivo:fl.name,tipo:fl.type||"application/octet-stream",datos});
+    }else{
+      const id="docof_"+Date.now().toString(36);
+      j=await api("guardar",{tabla:"config",id,registro:{nombre:g("titulo"),valor:JSON.stringify({cat:g("cat"),url:g("url"),desc:g("desc")})}});
+    }
+    upsert(config,j.registro); renderDocsOf(); stamp(); $("#dlgDocOf").close(); toast(m==="archivo"?"Archivo subido":"Documento añadido","ok");
+  }catch(err){ if(err.clave) return logout(); $("#docOfMsg").textContent=(err.message==="accion")?"Falta actualizar el Apps Script para poder subir archivos.":errTexto(err) }
+  finally{ btn.disabled=false; btn.textContent=txt }
 });
 renderDocsOf();
+
+/* ---------- Enlaces Erasmus+ (fijos + añadidos) ---------- */
+const LK_FIJOS=[...document.querySelectorAll("#lkGrid > a.lk")].map(a=>a.cloneNode(true));
+function renderLinks(){
+  const g=$("#lkGrid"); if(!g) return; g.innerHTML="";
+  LK_FIJOS.forEach(a=>g.appendChild(a.cloneNode(true)));
+  config.filter(c=>String(c.id).startsWith("enlace_")).forEach(c=>{
+    let d={}; try{ d=JSON.parse(c.valor||"{}") }catch(e){}
+    const w=document.createElement("div"); w.className="lk-wrap";
+    const a=document.createElement("a"); a.className="lk lk-extra"; a.href=d.url||"#"; a.target="_blank"; a.rel="noopener";
+    const st=document.createElement("strong"); st.textContent=c.nombre+" ↗"; const sp=document.createElement("span"); sp.textContent=d.desc||"Enlace añadido";
+    a.append(st,sp);
+    const x=document.createElement("button"); x.type="button"; x.className="lk-x"; x.textContent="✕"; x.title="Quitar este enlace"; x.setAttribute("aria-label","Quitar «"+c.nombre+"»");
+    x.addEventListener("click",async()=>{ if(!confirm("¿Quitar el enlace «"+c.nombre+"»?")) return;
+      try{ await api("borrar",{tabla:"config",id:c.id}); config=config.filter(z=>z.id!==c.id); renderLinks(); stamp(); toast("Enlace quitado") }
+      catch(err){ if(err.clave) return logout(); toast(errTexto(err)) } });
+    w.append(a,x); g.appendChild(w);
+  });
+}
+function lkFormShow(on){ const f=$("#lkForm"); f.hidden=!on; $("#btnLkAdd").hidden=on; if(on){ f.reset(); $("#lkMsg").textContent=""; f.elements.titulo.focus() } }
+$("#btnLinks").addEventListener("click",()=>{ renderLinks(); lkFormShow(false) });
+$("#btnLkAdd").addEventListener("click",()=>lkFormShow(true));
+$("#lkCancel").addEventListener("click",()=>lkFormShow(false));
+$("#lkForm").addEventListener("submit",async ev=>{
+  ev.preventDefault(); const f=ev.target; const g=k=>(f.elements[k].value||"").trim();
+  if(!g("titulo")||!g("url")){ $("#lkMsg").textContent="Escribe el nombre y la dirección del enlace."; return }
+  if(!/^https?:\/\//i.test(g("url"))){ $("#lkMsg").textContent="La dirección debe empezar por https://"; return }
+  $("#lkSave").disabled=true;
+  try{
+    const id="enlace_"+Date.now().toString(36);
+    const j=await api("guardar",{tabla:"config",id,registro:{nombre:g("titulo"),valor:JSON.stringify({url:g("url"),desc:g("desc")})}});
+    upsert(config,j.registro); renderLinks(); stamp(); lkFormShow(false); toast("Enlace añadido","ok");
+  }catch(err){ if(err.clave) return logout(); $("#lkMsg").textContent=errTexto(err) }
+  finally{ $("#lkSave").disabled=false }
+});
 
 /* ---------- Arranque ---------- */
 (async()=>{
